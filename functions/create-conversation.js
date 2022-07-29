@@ -3,6 +3,7 @@ const accountSid = process.env.ACCOUNT_SID
 const authToken = process.env.AUTH_TOKEN
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
 const author = process.env.AUTHOR
+const webhookUrl = process.env.WEBHOOK_URL
 const client = require("twilio")(accountSid, authToken)
 let conversationSid
 
@@ -58,7 +59,7 @@ exports.handler = function (context, event, callback) {
       .webhooks.create({
         "configuration.method": "POST",
         "configuration.filters": ["onMessageAdded"],
-        "configuration.url": "https://johnchaffee.ngrok.io/new-interaction",
+        "configuration.url": webhookUrl,
         target: "webhook",
       })
       .then((webhook) =>
