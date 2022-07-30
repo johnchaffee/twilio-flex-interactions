@@ -98,9 +98,9 @@ exports.handler = function (context, event, callback) {
         const id = records[0].id
         let activities = records[0].fields.activities
         const fields = {}
-        console.log("TOP id:", id)
-        console.log("TOP activities:", activities)
-        console.log("TOP fields:", fields)
+        console.log("id:", id)
+        console.log("activities:", activities)
+        console.log("fields:", fields)
         if (activities) {
           // append to existing activities
           fields.activities = `${activities}\n${activity}`

@@ -18,11 +18,7 @@
       <div id="main-column" class="col-sm-12">
         <h3 class="pt-3 mb-0">
           <a href="/index.html">
-            <img
-              src="/images/rmcp-logo.png"
-              height="72px"
-              alt="Logo"
-            />
+            <img src="/images/rmcp-logo.png" height="72px" alt="Logo" />
           </a>
         </h3>
         <div class="row">
@@ -391,8 +387,6 @@
           $(".alert").hide()
           console.log("#create-appointment-btn clicked")
           $("#success-alert").fadeToggle("slow")
-          $("#create-appointment-btn").attr("disabled", false)
-
           console.log("CREATE APPOINTMENT > CONTACT", contact)
           let contactId = contact.id
           let updateField = "appointments"
@@ -433,6 +427,7 @@
               console.log("AXIOS CREATE CONVERSATION ERROR:", err)
             })
 
+          $("#create-appointment-btn").attr("disabled", false)
           $("#appointment-history").append(`<p>${updateValue}<p>`)
         })
 
@@ -471,10 +466,23 @@
           $(".alert").hide()
           console.log("#send-message-btn clicked")
           $("#success-alert").fadeToggle("slow")
-          $("#send-message-btn").attr("disabled", false)
-
           console.log("SEND MESSSAGE > CONTACT", contact)
           let messageBody = `${$("#send-message").val()}`
+          let contactId = contact.id
+          let updateField = "activities"
+          let updateValue = `${myTime}: Message Sent`
+          updateRecordById(contactId, updateField, updateValue)
+            .then(function () {
+              console.log("THEN UPDATE RECORD BY ID > NOTES")
+              if (contact.length != 0) {
+                console.log("RECORD UPDATED")
+              } else {
+                console.log("RECORD NOT UPDATED")
+              }
+            })
+            .catch(function (err) {
+              console.log(err)
+            })
 
           createConversation(e164Phone, messageBody)
             .then(function () {
@@ -485,8 +493,8 @@
             })
 
           $("#send-message-btn").attr("disabled", false)
-          $("#contact-notes").append(`<p>${updateValue}<p>`)
-          $("#new-note").val("")
+          $("#activity-log").append(`<p>${updateValue}<p>`)
+          $("#send-message").val("")
         })
 
         // CLOSE ALERT
