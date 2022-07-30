@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" type="text/css" href="./css/stylesheet.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <title>Twilio Flex CRM Details</title>
+  </head>
+  <body>
+    <div class="container">
+      <div id="main-column" class="col-sm-12">
+        <h3 class="pt-3 mb-0">
+          <a href="/index.html">
+            <img
+              src="/images/les-schwab-logo.png"
+              height="36px"
+              alt="Les Schwab Logo"
+            />
+          </a>
+        </h3>
+        <div class="row">
+          <div class="col">
+            <div class="pt-3">
+              <div class="border p-3 bg-light">
+                <h4>Contact Info</h4>
+                <div id="contact-details" class="">
+                  <!-- Contact Details go here -->
+                </div>
+              </div>
+            </div>
+            <div class="pt-3">
+              <div class="border p-3 bg-light">
+                <h4>Notes</h4>
+                <div id="contact-notes" class="">
+                  <!-- Notes go here -->
+                </div>
+                <hr />
+                <form action="#">
+                  <div class="form-group">
+                    <textarea id="new-note" name="new-note" rows="4"></textarea>
+                    <br />
+                    <a
+                      id="add-notes-btn"
+                      class="submit btn btn-primary mt-2"
+                      href="#"
+                      >Add Notes</a
+                    >
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="pt-3">
+              <div class="border p-3 bg-light">
+                <h4>New Appointment</h4>
+                <div class="pt-1">
+                  <form action="#">
+                    <div class="form-group">
+                      <input
+                        id="date"
+                        type="date"
+                        name="date"
+                        class="mb-2"
+                      /><br />
+                      <input
+                        id="time"
+                        type="time"
+                        name="time"
+                        value="09:00"
+                      /><br />
+                      <label for="serviceType" class="mt-2">Service type:</label
+                      ><br />
+                      <select id="serviceType">
+                        <option value="New Tires">New Tires</option>
+                        <option value="Flat Repair">Flat Repair</option>
+                        <option value="Wheel Balance">Wheel Balance</option>
+                        <option value="Tire Rotation">Tire Rotation</option>
+                        <option value="Seasonal Changeover">
+                          Seasonal Changeover
+                        </option>
+                        <option value="TPMS Service">TPMS Service</option>
+                        <option value="Free Pre-Trip Safety Check">
+                          Free Pre-Trip Safety Check
+                        </option></select
+                      ><br />
+                      <a
+                        id="create-appointment-btn"
+                        class="submit btn btn-primary mt-2"
+                        href="#"
+                        >Create Appointment</a
+                      >
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="success-alert"
+              class="mt-3 alert alert-success alert-dismissible"
+              style="display: none"
+            >
+              <button id="close-alert" type="button" class="close">
+                &times;
+              </button>
+              <strong>Appointment Scheduled</strong>
+            </div>
+            <div
+              id="failed-alert"
+              class="mt-3 alert alert-danger alert-dismissible"
+              style="display: none"
+            >
+              <button id="close-alert" type="button" class="close">
+                &times;
+              </button>
+              <strong>Appointment NOT scheduled</strong>
+            </div>
+            <div class="pt-3">
+              <div class="border p-3 bg-light">
+                <h4>Appointment History</h4>
+                <div class="pt-3">
+                  <div id="appointment-history" class=""></div>
+                </div>
+              </div>
+            </div>
+            <div class="pt-3">
+              <div class="border p-3 bg-light">
+                <h4>Activity Log</h4>
+                <div class="pt-3">
+                  <div id="activity-log" class=""></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="./js/phoneFormat.js"></script>
+    <!-- Axios library -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        console.log("details.html > script > DOCUMENT.READY")
+        const params = window.location.search
+        console.log("PARAMS: " + params)
+        const id = getParam("id")
+        console.log("getParams ID: " + id)
+        const field = getParam("field")
+        console.log("getParams field: " + field)
+        const value = getParam("value")
+        console.log("getParams value: " + value)
+
+        function getParam(paramName) {
+          let query = window.location.search.substring(1)
+          let params = query.split("&")
+          for (let i = 0; i < params.length; i++) {
+            let pair = params[i].split("=")
+            if (decodeURIComponent(pair[0]) == paramName) {
+              return decodeURIComponent(pair[1])
+            }
+          }
+          console.log("Query param %s not found", paramName)
+        }
+
+        let contact
+        let e164Phone
+
+        // GET RECORD BY FIELD
+        const getRecordByField = async (field, value) => {
+          console.log("GET RECORD BY FIELD")
+          const options = {
+            url: `./view?table=contacts&field=${field}&value=${encodeURIComponent(
+              value
+            )}`,
+            method: "GET",
+          }
+          console.log("options:", options)
+          try {
+            const { data } = await axios(options)
+            const record = data
+            contact = record
+            console.log("GET RECORD BY FIELD > CONTACT:", contact)
+          } catch (err) {
+            console.log("ERROR FETCHING CONTACT FROM AIRTABLE")
+            console.error(err)
+          }
+        }
+
+        getRecordByField(field, value)
+          .then(function () {
+            console.log("GET RECORD BY ID THEN BUILD VIEW")
+            if (contact.length != 0) {
+              buildView(contact)
+            } else {
+              console.log("RECORD NOT FOUND - REDIRECT TO NEW")
+              window.location = `./new.html?phone=${encodeURIComponent(value)}`
+            }
+          })
+          .catch(function (err) {
+            console.log(err)
+          })
+
+        function buildView(contact) {
+          console.log("BUILD VIEW")
+          console.log(contact)
+          $("#contact-details").ready(function () {
+            let contactDetails = ""
+            let contactImage = contact.fields.image
+              ? contact.fields.image[0].url
+              : "./images/contact.jpeg"
+            let name =
+              contact.fields.name && contact.fields.name.length > 1
+                ? `<b>${contact.fields.name}</b><br>`
+                : ""
+            let phone =
+              contact.fields.phone && contact.fields.phone.length > 0
+                ? `${formatNumber(contact.fields.phone)}<br>`
+                : ""
+            e164Phone =
+              contact.fields.phone && contact.fields.phone.length > 0
+                ? contact.fields.phone
+                : ""
+            let company =
+              contact.fields.company && contact.fields.company.length > 0
+                ? `${contact.fields.company}<br>`
+                : ""
+            let email =
+              contact.fields.email && contact.fields.email.length > 0
+                ? `${contact.fields.email}<br>`
+                : ""
+            contactDetails +=
+              `<p><img width="150px" src="${contactImage}" alt="Picture"></p>` +
+              `<p>` +
+              `${name}` +
+              `${company}` +
+              `${phone}` +
+              `${email}` +
+              `123 Main Street<br>Seattle, WA 98110` +
+              `</p>`
+            $("#contact-details").html(contactDetails)
+
+            let contactNotes = ""
+            if (contact.fields.notes != undefined) {
+              const notesArray = contact.fields.notes.split("\n").sort()
+              notesArray.forEach((note) => {
+                contactNotes += `<p>${note}<p>`
+              })
+              $("#contact-notes").html(contactNotes)
+            }
+
+            let appointmentHistory = ""
+            if (contact.fields.appointments != undefined) {
+              const appointmentsArray = contact.fields.appointments
+                .split("\n")
+                .sort()
+              console.log("APPOINTMENTS ARRAY", appointmentsArray)
+              appointmentsArray.forEach((appointment) => {
+                appointmentHistory += `<p>${appointment}<p>`
+              })
+            }
+            $("#appointment-history").html(appointmentHistory)
+
+            let activityLog = ""
+            if (contact.fields.activities != undefined) {
+              const activitiesArray = contact.fields.activities
+                .split("\n")
+                .sort()
+              activitiesArray.forEach((activity) => {
+                activityLog += `<p>${activity}<p>`
+              })
+              $("#activity-log").html(activityLog)
+            }
+          })
+        }
+
+        // UPDATE RECORD BY ID
+        const updateRecordById = async (
+          contactId,
+          updateField,
+          updateValue
+        ) => {
+          console.log("UPDATE RECORD BY ID")
+          const options = {
+            url: `./update?table=contacts&id=${contactId}&field=${updateField}&value=${encodeURIComponent(
+              updateValue
+            )}`,
+            method: "GET",
+          }
+          console.log("options:", options)
+          try {
+            const { data } = await axios(options)
+            const { record } = data
+            contact = record
+            console.log("UPDATE RECORD BY ID > CONTACT:", contact)
+          } catch (err) {
+            console.log("ERROR FETCHING CONTACT FROM AIRTABLE")
+            console.error(err)
+          }
+        }
+
+        // SEND MESSAGE
+        const sendMessage = async (to, body) => {
+          console.log("ENTER AXIOS SEND MESSSAGE FUNCTION")
+          const options = {
+            url: `./sendMessage?to=${encodeURIComponent(
+              to
+            )}&body=${encodeURIComponent(body)}`,
+            method: "GET",
+          }
+          console.log("options:", options)
+          try {
+            // const { data } = await axios(options)
+            await axios(options)
+            console.log("END SUCCESSFUL AXIOS SEND MESSAGE FUNCTION")
+          } catch (err) {
+            console.error("ERROR IN AXIOS SEND MESSAGE FUNCTION:", err)
+          }
+        }
+
+        // Set today's date on Date picker
+        let rightNow = new Date()
+        let year = rightNow.getFullYear()
+        let month = rightNow.getMonth() + 1
+        month = ("0" + month).slice(-2)
+        let day = rightNow.getDate()
+        day = ("0" + day).slice(-2)
+        let hour = rightNow.getHours()
+        let minute = rightNow.getMinutes()
+        let myDate = `${year}-${month}-${day}`
+        console.log("myDate: " + myDate)
+        let myTime = `${myDate} ${hour}:${minute}`
+        console.log("myTime: " + myTime)
+
+        $("#date").attr("value", myDate)
+
+        $("#create-appointment-btn").click(function (event) {
+          event.preventDefault()
+          $("#create-appointment-btn").attr("disabled", true)
+          $(".alert").hide()
+          console.log("#create-appointment-btn clicked")
+          // $("#success-alert").fadeIn("slow")
+          $("#create-appointment-btn").attr("disabled", false)
+
+          console.log("CREATE APPOINTMENT > CONTACT", contact)
+          let contactId = contact.id
+          let updateField = "appointments"
+          let updateValue = `${$("#date").val()} ${$("#time").val()}: ${$(
+            "#serviceType"
+          ).val()}`
+          let messageBody = `Your Les Schwab ${$("#serviceType").val()} appointment has been scheduled for ${$("#date").val()} at ${$("#time").val()}`
+          updateRecordById(contactId, updateField, updateValue)
+            .then(function () {
+              console.log("THEN UPDATE RECORD BY ID > APPOINTMENTS")
+              if (contact.length != 0) {
+                console.log("RECORD UPDATED")
+              } else {
+                console.log("RECORD NOT UPDATED")
+              }
+            })
+            .catch(function (err) {
+              console.log(err)
+            })
+
+          sendMessage(e164Phone, messageBody)
+            .then(function () {
+              console.log("CALL AXIOS SEND MESSAGE FUNCTION")
+            })
+            .catch(function (err) {
+              console.log("AXIOS SEND MESSAGE ERROR:", err)
+            })
+
+          $("#appointment-history").append(`<p>${updateValue}<p>`)
+        })
+
+        $("#add-notes-btn").click(function (event) {
+          event.preventDefault()
+          $("#add-notes-btn").attr("disabled", true)
+          $(".alert").hide()
+          console.log("#add-notes-btn clicked")
+          // $("#success-alert").fadeIn("slow")
+
+          console.log("ADD NOTE > CONTACT", contact)
+          let contactId = contact.id
+          let updateField = "notes"
+          let updateValue = `${myTime}: ${$("#new-note").val()}`
+          updateRecordById(contactId, updateField, updateValue)
+            .then(function () {
+              console.log("THEN UPDATE RECORD BY ID > NOTES")
+              if (contact.length != 0) {
+                console.log("RECORD UPDATED")
+              } else {
+                console.log("RECORD NOT UPDATED")
+              }
+            })
+            .catch(function (err) {
+              console.log(err)
+            })
+
+          $("#add-notes-btn").attr("disabled", false)
+          $("#contact-notes").append(`<p>${updateValue}<p>`)
+          $("#new-note").val("")
+        })
+
+        // CLOSE ALERT
+        $("#close-alert").click(function () {
+          $(".alert").fadeOut("fast")
+        })
+      })
+    </script>
+  </body>
+</html>
