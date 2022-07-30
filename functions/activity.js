@@ -61,19 +61,19 @@ exports.handler = function (context, event, callback) {
 
   if (channelType) {
     if (channelType === "sms") {
-      activity = `${myTime}: Text Message`
+      activity = `${myTime}: Completed SMS conversation`
       console.log("SMS TASK COMPLETED")
       console.log("PHONE:", phone)
     } else if (channelType === "web") {
       console.log("CHAT TASK COMPLETED")
-      activity = `${myTime}: Web Chat`
+      activity = `${myTime}: Completed Web Chat`
       phone = "+12063996576"
       console.log("PHONE:", phone)
     }
   } else if (type && type === "inbound") {
     console.log("VOICE TASK COMPLETED")
     console.log("PHONE:", phone)
-    activity = `${myTime}: Phone Call`
+    activity = `${myTime}: Completed Phone Call`
   }
   console.log("encodeURIComponent PHONE:", encodeURIComponent(phone))
 
