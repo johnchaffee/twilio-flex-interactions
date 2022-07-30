@@ -467,7 +467,7 @@
           let messageBody = `${$("#send-message").val()}`
           let contactId = contact.id
           let updateField = "activities"
-          let updateValue = `${myTime}: Message Sent`
+          let updateValue = `${myTime}: Sent Message`
           updateRecordById(contactId, updateField, updateValue)
             .then(function () {
               console.log("THEN UPDATE RECORD BY ID > NOTES")
