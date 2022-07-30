@@ -9,15 +9,16 @@ let conversationSid
 let activeConversation = false
 
 exports.handler = function (context, event, callback) {
-  console.log("\x1b[32m context ==>\n", context, "\x1b[0m")
-  console.log("\x1b[32m event ==>\n", event, "\x1b[0m")
+  console.log("\x1b[32m context ==>", context, "\x1b[0m")
+  console.log("\x1b[32m event ==>", event, "\x1b[0m")
 
   const mobileNumber = event.mobileNumber
-  console.log(`\x1b[32m mobileNumber ==> ${mobileNumber} \x1b[0m`)
+  console.log("\x1b[32m mobileNumber ==>", mobileNumber, "\x1b[0m")
 
   const body = event.body
-  console.log(`\x1b[32m body ==> ${body} \x1b[0m`)
+  console.log("\x1b[32m body ==>", body, "\x1b[0m")
 
+  // Check to see if an active conversation already exists
   async function getActiveConversations() {
     await client.conversations.v1.participantConversations
       .list({ address: mobileNumber, limit: 20 })
@@ -27,10 +28,9 @@ exports.handler = function (context, event, callback) {
             activeConversation = true
             conversationSid = p.conversationSid
             console.log(
-              `\x1b[32m activeConversation ==> ${activeConversation} \x1b[0m`
-            )
-            console.log(
-              `\x1b[32m conversationSid ==> ${conversationSid} \x1b[0m`
+              "\x1b[32m conversationSid ==>",
+              conversationSid,
+              "\x1b[0m"
             )
             return false
           }
@@ -45,7 +45,7 @@ exports.handler = function (context, event, callback) {
       .create({ friendlyName: "Follow up conversation" })
       .then((conversation) => {
         conversationSid = conversation.sid
-        console.log(`\x1b[32m conversationSid ==> ${conversationSid} \x1b[0m`)
+        console.log("\x1b[32m conversationSid ==>", conversationSid, "\x1b[0m")
       })
       .catch((error) => console.log(error))
   }
@@ -58,7 +58,7 @@ exports.handler = function (context, event, callback) {
         "messagingBinding.proxyAddress": twilioPhoneNumber,
       })
       .then((participant) =>
-        console.log(`\x1b[32m participant.sid ==> ${participant.sid} \x1b[0m`)
+        console.log("\x1b[32m participant.sid ==>", participant.sid, "\x1b[0m")
       )
       .catch((error) => console.log(error))
   }
@@ -71,7 +71,7 @@ exports.handler = function (context, event, callback) {
         body,
       })
       .then((message) =>
-        console.log(`\x1b[32m message.sid ==> ${message.sid} \x1b[0m`)
+        console.log("\x1b[32m message.sid ==>", message.sid, "\x1b[0m")
       )
       .catch((error) => console.log(error))
   }
@@ -86,7 +86,7 @@ exports.handler = function (context, event, callback) {
         target: "webhook",
       })
       .then((webhook) =>
-        console.log(`\x1b[32m webhook.sid ==> ${webhook.sid} \x1b[0m`)
+        console.log("\x1b[32m webhook.sid ==>", webhook.sid, "\x1b[0m")
       )
       .catch((error) => console.log(error))
   }

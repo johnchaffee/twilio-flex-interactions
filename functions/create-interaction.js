@@ -6,20 +6,19 @@ const workflowSid = process.env.WORKFLOW_SID
 const client = require("twilio")(accountSid, authToken)
 
 exports.handler = function (context, event, callback) {
-  console.log("\x1b[32m context ==>\n", context, "\x1b[0m")
-  console.log("\x1b[32m event ==>\n", event, "\x1b[0m")
+  console.log("\x1b[32m context ==>", context, "\x1b[0m")
+  console.log("\x1b[32m event ==>", event, "\x1b[0m")
 
   const mobileNumber = event.Author
-  console.log(`\x1b[32m mobileNumber ==> ${mobileNumber} \x1b[0m`)
+  console.log("\x1b[32m mobileNumber ==>", mobileNumber, "\x1b[0m")
 
   const conversationSid = event.ConversationSid
-  console.log(`\x1b[32m conversationSid ==> ${conversationSid} \x1b[0m`)
+  console.log("\x1b[32m conversationSid ==>", conversationSid, "\x1b[0m")
 
-  const WebhookSid = event.WebhookSid
-  console.log(`\x1b[32m WebhookSid ==> ${WebhookSid} \x1b[0m`)
+  const webhookSid = event.WebhookSid
+  console.log("\x1b[32m webhookSid ==>", webhookSid, "\x1b[0m")
 
   async function createInteraction() {
-    console.log(`\x1b[32m CREATE INTERACTION \x1b[0m`)
     await client.flexApi.v1.interaction
       .create({
         channel: {
@@ -41,21 +40,18 @@ exports.handler = function (context, event, callback) {
         },
       })
       .then((interaction) =>
-        console.log(
-          `\x1b[32m interaction.channel ==> ${interaction.channel} \x1b[0m`
-        )
+        console.log("\x1b[32m createInteraction ==>", interaction.channel, "\x1b[0m")
       )
       .catch((error) => console.log(error))
   }
 
   async function removeWebhook() {
-    console.log(`\x1b[32m CREATE INTERACTION \x1b[0m`)
     await client.conversations.v1
       .conversations(conversationSid)
-      .webhooks(WebhookSid)
+      .webhooks(webhookSid)
       .remove()
       .then(() =>
-        console.log(`\x1b[32m webhook removed ==> ${WebhookSid} \x1b[0m`)
+        console.log("\x1b[32m remove webhook ==>", webhookSid, "\x1b[0m")
       )
       .catch((error) => console.log(error))
   }
