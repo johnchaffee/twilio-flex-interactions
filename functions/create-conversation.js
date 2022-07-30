@@ -6,6 +6,7 @@ const author = process.env.AUTHOR
 const webhookUrl = process.env.WEBHOOK_URL
 const client = require("twilio")(accountSid, authToken)
 let conversationSid
+let activeConversation = false
 
 exports.handler = function (context, event, callback) {
   console.log("\x1b[32m context ==>\n", context, "\x1b[0m")
@@ -16,6 +17,28 @@ exports.handler = function (context, event, callback) {
 
   const body = event.body
   console.log(`\x1b[32m body ==> ${body} \x1b[0m`)
+
+  async function getActiveConversations() {
+    await client.conversations.v1.participantConversations
+      .list({ address: mobileNumber, limit: 20 })
+      .then((participantConversations) => {
+        participantConversations.forEach((p) => {
+          if (p.conversationState === "active") {
+            activeConversation = true
+            conversationSid = p.conversationSid
+            console.log(
+              `\x1b[32m activeConversation ==> ${activeConversation} \x1b[0m`
+            )
+            console.log(
+              `\x1b[32m conversationSid ==> ${conversationSid} \x1b[0m`
+            )
+            return false
+          }
+          return true
+        })
+      })
+      .catch((error) => console.log(error))
+  }
 
   async function createConvversation() {
     await client.conversations.v1.conversations
@@ -69,13 +92,19 @@ exports.handler = function (context, event, callback) {
   }
 
   // Run all the functions
-  createConvversation().then(() => {
-    createParticipant().then(() => {
-      createMessage().then(() => {
-        createWebhook().then(() => {
-          callback(null)
+  getActiveConversations().then(() => {
+    if (activeConversation === false) {
+      createConvversation().then(() => {
+        createParticipant().then(() => {
+          createMessage().then(() => {
+            createWebhook().then(() => {
+              callback(null)
+            })
+          })
         })
       })
-    })
+    } else {
+      createMessage().then(() => callback(null))
+    }
   })
 }
