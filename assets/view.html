@@ -90,17 +90,14 @@
                       <label for="serviceType" class="mt-2">Service type:</label
                       ><br />
                       <select id="serviceType">
-                        <option value="New Tires">New Tires</option>
-                        <option value="Flat Repair">Flat Repair</option>
-                        <option value="Wheel Balance">Wheel Balance</option>
-                        <option value="Tire Rotation">Tire Rotation</option>
-                        <option value="Seasonal Changeover">
-                          Seasonal Changeover
+                        <option value="Initial Consolutation">
+                          Initial Consultation
                         </option>
-                        <option value="TPMS Service">TPMS Service</option>
-                        <option value="Free Pre-Trip Safety Check">
-                          Free Pre-Trip Safety Check
-                        </option></select
+                        <option value="Crisis Counseling">
+                          Crisis Counseling
+                        </option>
+                        <option value="Follow Up Call">Follow Up Call</option>
+                        <option value="Other">Other</option></select
                       ><br />
                       <a
                         id="create-appointment-btn"
@@ -393,7 +390,7 @@
           let updateValue = `${$("#date").val()} ${$("#time").val()}: ${$(
             "#serviceType"
           ).val()}`
-          let messageBody = `Your Les Schwab ${$(
+          let messageBody = `Your Rocky Mountain Crisis Partners ${$(
             "#serviceType"
           ).val()} appointment has been scheduled for ${$(
             "#date"
