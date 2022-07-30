@@ -37,27 +37,42 @@
             </div>
             <div class="pt-3">
               <div class="border p-3 bg-light">
-                <h4>Notes</h4>
-                <div id="contact-notes" class="">
-                  <!-- Notes go here -->
+                <h4>Appointment History</h4>
+                <div class="pt-3">
+                  <div id="appointment-history" class=""></div>
                 </div>
-                <hr />
-                <form action="#">
-                  <div class="form-group">
-                    <textarea id="new-note" name="new-note" rows="4"></textarea>
-                    <br />
-                    <a
-                      id="add-notes-btn"
-                      class="submit btn btn-primary mt-2"
-                      href="#"
-                      >Add Notes</a
-                    >
-                  </div>
-                </form>
+              </div>
+            </div>
+            <div class="pt-3">
+              <div class="border p-3 bg-light">
+                <h4>Activity Log</h4>
+                <div class="pt-3">
+                  <div id="activity-log" class=""></div>
+                </div>
               </div>
             </div>
           </div>
           <div class="col">
+            <div
+              id="success-alert"
+              class="mt-3 mb-0 alert alert-success alert-dismissible"
+              style="display: none"
+            >
+              <button id="close-alert" type="button" class="close">
+                &times;
+              </button>
+              <strong>Message Sent</strong>
+            </div>
+            <div
+              id="failed-alert"
+              class="mt-3 alert alert-danger alert-dismissible"
+              style="display: none"
+            >
+              <button id="close-alert" type="button" class="close">
+                &times;
+              </button>
+              <strong>Message NOT sent</strong>
+            </div>
             <div class="pt-3">
               <div class="border p-3 bg-light">
                 <h4>New Appointment</h4>
@@ -102,41 +117,52 @@
                 </div>
               </div>
             </div>
-
-            <div
-              id="success-alert"
-              class="mt-3 alert alert-success alert-dismissible"
-              style="display: none"
-            >
-              <button id="close-alert" type="button" class="close">
-                &times;
-              </button>
-              <strong>Appointment Scheduled</strong>
-            </div>
-            <div
-              id="failed-alert"
-              class="mt-3 alert alert-danger alert-dismissible"
-              style="display: none"
-            >
-              <button id="close-alert" type="button" class="close">
-                &times;
-              </button>
-              <strong>Appointment NOT scheduled</strong>
-            </div>
             <div class="pt-3">
               <div class="border p-3 bg-light">
-                <h4>Appointment History</h4>
-                <div class="pt-3">
-                  <div id="appointment-history" class=""></div>
-                </div>
+                <h4>Send Message</h4>
+                <form action="#">
+                  <div class="form-group">
+                    <textarea
+                      id="send-message"
+                      name="send-message"
+                      rows="4"
+                      style="width: 100%"
+                    ></textarea>
+                    <br />
+                    <a
+                      id="send-message-btn"
+                      class="submit btn btn-primary mt-2"
+                      href="#"
+                      >Send Message</a
+                    >
+                  </div>
+                </form>
               </div>
             </div>
             <div class="pt-3">
               <div class="border p-3 bg-light">
-                <h4>Activity Log</h4>
-                <div class="pt-3">
-                  <div id="activity-log" class=""></div>
+                <h4>Notes</h4>
+                <div id="contact-notes" class="">
+                  <!-- Notes go here -->
                 </div>
+                <hr />
+                <form action="#">
+                  <div class="form-group">
+                    <textarea
+                      id="new-note"
+                      name="new-note"
+                      rows="4"
+                      style="width: 100%"
+                    ></textarea>
+                    <br />
+                    <a
+                      id="add-notes-btn"
+                      class="submit btn btn-primary mt-2"
+                      href="#"
+                      >Add Notes</a
+                    >
+                  </div>
+                </form>
               </div>
             </div>
           </div>
@@ -307,11 +333,11 @@
         }
 
         // SEND MESSAGE
-        const sendMessage = async (to, body) => {
+        const sendMessage = async (mobileNumber, body) => {
           console.log("ENTER AXIOS SEND MESSSAGE FUNCTION")
           const options = {
-            url: `./sendMessage?to=${encodeURIComponent(
-              to
+            url: `./sendMessage?mobileNumber=${encodeURIComponent(
+              mobileNumber
             )}&body=${encodeURIComponent(body)}`,
             method: "GET",
           }
@@ -325,6 +351,24 @@
           }
         }
 
+        // CREATE CONVERSATION
+        const createConversation = async (mobileNumber, body) => {
+          console.log("ENTER AXIOS CREATE CONVERSATION FUNCTION")
+          const options = {
+            url: `./create-conversation?mobileNumber=${encodeURIComponent(
+              mobileNumber
+            )}&body=${encodeURIComponent(body)}`,
+            method: "POST",
+          }
+          console.log("options:", options)
+          try {
+            // const { data } = await axios(options)
+            await axios(options)
+            console.log("END SUCCESSFUL AXIOS CREATE CONVERSATION FUNCTION")
+          } catch (err) {
+            console.error("ERROR IN AXIOS CREATE CONVERSATION FUNCTION:", err)
+          }
+        }
         // Set today's date on Date picker
         let rightNow = new Date()
         let year = rightNow.getFullYear()
@@ -346,7 +390,7 @@
           $("#create-appointment-btn").attr("disabled", true)
           $(".alert").hide()
           console.log("#create-appointment-btn clicked")
-          // $("#success-alert").fadeIn("slow")
+          $("#success-alert").fadeToggle("slow")
           $("#create-appointment-btn").attr("disabled", false)
 
           console.log("CREATE APPOINTMENT > CONTACT", contact)
@@ -355,7 +399,11 @@
           let updateValue = `${$("#date").val()} ${$("#time").val()}: ${$(
             "#serviceType"
           ).val()}`
-          let messageBody = `Your Les Schwab ${$("#serviceType").val()} appointment has been scheduled for ${$("#date").val()} at ${$("#time").val()}`
+          let messageBody = `Your Les Schwab ${$(
+            "#serviceType"
+          ).val()} appointment has been scheduled for ${$(
+            "#date"
+          ).val()} at ${$("#time").val()}`
           updateRecordById(contactId, updateField, updateValue)
             .then(function () {
               console.log("THEN UPDATE RECORD BY ID > APPOINTMENTS")
@@ -369,12 +417,20 @@
               console.log(err)
             })
 
-          sendMessage(e164Phone, messageBody)
+          // sendMessage(e164Phone, messageBody)
+          //   .then(function () {
+          //     console.log("CALL AXIOS SEND MESSAGE FUNCTION")
+          //   })
+          //   .catch(function (err) {
+          //     console.log("AXIOS SEND MESSAGE ERROR:", err)
+          //   })
+
+          createConversation(e164Phone, messageBody)
             .then(function () {
-              console.log("CALL AXIOS SEND MESSAGE FUNCTION")
+              console.log("CALL AXIOS CREATE CONVERSATION FUNCTION")
             })
             .catch(function (err) {
-              console.log("AXIOS SEND MESSAGE ERROR:", err)
+              console.log("AXIOS CREATE CONVERSATION ERROR:", err)
             })
 
           $("#appointment-history").append(`<p>${updateValue}<p>`)
@@ -385,7 +441,7 @@
           $("#add-notes-btn").attr("disabled", true)
           $(".alert").hide()
           console.log("#add-notes-btn clicked")
-          // $("#success-alert").fadeIn("slow")
+          // $("#success-alert").fadeToggle("slow")
 
           console.log("ADD NOTE > CONTACT", contact)
           let contactId = contact.id
@@ -405,6 +461,30 @@
             })
 
           $("#add-notes-btn").attr("disabled", false)
+          $("#contact-notes").append(`<p>${updateValue}<p>`)
+          $("#new-note").val("")
+        })
+
+        $("#send-message-btn").click(function (event) {
+          event.preventDefault()
+          $("#send-message-btn").attr("disabled", true)
+          $(".alert").hide()
+          console.log("#send-message-btn clicked")
+          $("#success-alert").fadeToggle("slow")
+          $("#send-message-btn").attr("disabled", false)
+
+          console.log("SEND MESSSAGE > CONTACT", contact)
+          let messageBody = `${$("#send-message").val()}`
+
+          createConversation(e164Phone, messageBody)
+            .then(function () {
+              console.log("CALL AXIOS CREATE CONVERSATION FUNCTION")
+            })
+            .catch(function (err) {
+              console.log("AXIOS CREATE CONVERSATION ERROR:", err)
+            })
+
+          $("#send-message-btn").attr("disabled", false)
           $("#contact-notes").append(`<p>${updateValue}<p>`)
           $("#new-note").val("")
         })
