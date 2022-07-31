@@ -34,17 +34,17 @@
             <div class="pt-3">
               <div class="border p-3 bg-light">
                 <h4>Appointment History</h4>
-                <div class="pt-3">
-                  <div id="appointment-history" class=""></div>
-                </div>
+                <ul id="appointment-history" class="pl-3">
+                  <!-- Appointments go here -->
+                </ul>
               </div>
             </div>
             <div class="pt-3">
               <div class="border p-3 bg-light">
                 <h4>Activity Log</h4>
-                <div class="pt-3">
-                  <div id="activity-log" class=""></div>
-                </div>
+                <ul id="activity-log" class="pl-3">
+                  <!-- Activities go here -->
+                </ul>
               </div>
             </div>
           </div>
@@ -135,9 +135,9 @@
             <div class="pt-3">
               <div class="border p-3 bg-light">
                 <h4>Notes</h4>
-                <div id="contact-notes" class="">
+                <ul id="contact-notes" class="pl-3">
                   <!-- Notes go here -->
-                </div>
+                </ul>
                 <hr />
                 <form action="#">
                   <div class="form-group">
@@ -269,8 +269,10 @@
             let contactNotes = ""
             if (contact.fields.notes != undefined) {
               const notesArray = contact.fields.notes.split("\n").sort()
+              console.log("NOTES ARRAY:", notesArray)
               notesArray.forEach((note) => {
-                contactNotes += `<p>${note}<p>`
+                contactNotes += `<li>${note}</li>`
+                console.log("CONTACT NOTES:", contactNotes)
               })
               $("#contact-notes").html(contactNotes)
             }
@@ -282,7 +284,7 @@
                 .sort()
               console.log("APPOINTMENTS ARRAY", appointmentsArray)
               appointmentsArray.forEach((appointment) => {
-                appointmentHistory += `<p>${appointment}<p>`
+                appointmentHistory += `<li>${appointment}</li>`
               })
             }
             $("#appointment-history").html(appointmentHistory)
@@ -293,7 +295,7 @@
                 .split("\n")
                 .sort()
               activitiesArray.forEach((activity) => {
-                activityLog += `<p>${activity}<p>`
+                activityLog += `<li>${activity}</li>`
               })
               $("#activity-log").html(activityLog)
             }
@@ -425,7 +427,7 @@
             })
 
           $("#create-appointment-btn").attr("disabled", false)
-          $("#appointment-history").append(`<p>${updateValue}<p>`)
+          $("#appointment-history").append(`<li>${updateValue}</li>`)
         })
 
         $("#add-notes-btn").click(function (event) {
@@ -453,7 +455,8 @@
             })
 
           $("#add-notes-btn").attr("disabled", false)
-          $("#contact-notes").append(`<p>${updateValue}<p>`)
+          console.log("UPDATE VALUE:", updateValue)
+          $("#contact-notes").append(`<li>${updateValue}</li>`)
           $("#new-note").val("")
         })
 
@@ -490,7 +493,7 @@
             })
 
           $("#send-message-btn").attr("disabled", false)
-          $("#activity-log").append(`<p>${updateValue}<p>`)
+          $("#activity-log").append(`<li>${updateValue}</li>`)
           $("#send-message").val("")
         })
 
