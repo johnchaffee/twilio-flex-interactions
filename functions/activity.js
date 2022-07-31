@@ -25,16 +25,18 @@ exports.handler = function (context, event, callback) {
   console.log("task_attributes is ==> ", event[0].data.payload.task_attributes)
   const task = JSON.parse(event[0].data.payload.task_attributes)
   console.log("JSON.parse is ==> ", task)
-  // sms channelType == sms, phone = name
-  // chat channelType == web, phone = hard code to john
+  // sms: channelType == sms, phone = name
+  // chat: channelType == web, phone = hard code to john
+  // voice: type = inbound, phone = caller
   const channelType = task.channelType
   console.log("channelType is ==> ", channelType)
-  const name = task.name
-  console.log("name is ==> ", name)
-  const type = task.type
-  // voice type = inbound, phone = name
-  console.log("type is ==> ", task.type)
-  let phone = name
+  const customerAddress = task.customerAddress
+  console.log("customerAddress is ==> ", customerAddress)
+  const caller = task.caller
+  console.log("caller is ==> ", caller)
+  const direction = task.direction
+  console.log("direction is ==> ", direction)
+  let phone
   let activity
 
   // Set today's date on Date picker
@@ -63,6 +65,7 @@ exports.handler = function (context, event, callback) {
     if (channelType === "sms") {
       activity = `${myTime}: Completed SMS conversation`
       console.log("SMS TASK COMPLETED")
+      phone = customerAddress
       console.log("PHONE:", phone)
     } else if (channelType === "web") {
       console.log("CHAT TASK COMPLETED")
@@ -70,8 +73,9 @@ exports.handler = function (context, event, callback) {
       phone = "+12063996576"
       console.log("PHONE:", phone)
     }
-  } else if (type && type === "inbound") {
+  } else if (direction && direction === "inbound") {
     console.log("VOICE TASK COMPLETED")
+    phone = caller
     console.log("PHONE:", phone)
     activity = `${myTime}: Completed Phone Call`
   }
