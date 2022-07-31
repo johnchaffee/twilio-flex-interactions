@@ -25,13 +25,15 @@ exports.handler = function (context, event, callback) {
   console.log("task_attributes is ==> ", event[0].data.payload.task_attributes)
   const task = JSON.parse(event[0].data.payload.task_attributes)
   console.log("JSON.parse is ==> ", task)
-  // sms: channelType == sms, phone = name
+  // sms: channelType == sms, phone = from
   // chat: channelType == web, phone = hard code to john
   // voice: type = inbound, phone = caller
   const channelType = task.channelType
   console.log("channelType is ==> ", channelType)
   const customerAddress = task.customerAddress
   console.log("customerAddress is ==> ", customerAddress)
+  const from = task.from
+  console.log("from is ==> ", from)
   const caller = task.caller
   console.log("caller is ==> ", caller)
   const direction = task.direction
@@ -65,7 +67,7 @@ exports.handler = function (context, event, callback) {
     if (channelType === "sms") {
       activity = `${myTime}: Completed SMS conversation`
       console.log("SMS TASK COMPLETED")
-      phone = customerAddress
+      phone = from
       console.log("PHONE:", phone)
     } else if (channelType === "web") {
       console.log("CHAT TASK COMPLETED")
