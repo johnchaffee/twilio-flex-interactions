@@ -7,7 +7,7 @@
 require("dotenv").config()
 const accountSid = process.env.ACCOUNT_SID
 const authToken = process.env.AUTH_TOKEN
-const from = process.env.PHONE_NUMBER
+const from = process.env.TWILIO_PHONE_NUMBER
 const client = require("twilio")(accountSid, authToken)
 
 exports.handler = function (context, event, callback) {
