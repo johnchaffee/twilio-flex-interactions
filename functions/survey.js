@@ -68,17 +68,17 @@ exports.handler = function (context, event, callback) {
       if (records.length > 0) {
         console.log("\x1b[32m records[0].id ==>", records[0].id, "\x1b[0m")
         const id = records[0].id
-        const ratings = records[0].fields.ratings
-        const thisRating = `${myTime}: Customer rating received: ${rating}`
+        const activities = records[0].fields.activities
+        const thisRating = `${myTime}: Received customer rating: ${rating}`
         const fields = {}
         console.log("\x1b[32m id ==>", id, "\x1b[0m")
-        console.log("\x1b[32m ratings ==>", ratings, "\x1b[0m")
+        console.log("\x1b[32m activities ==>", activities, "\x1b[0m")
         console.log("\x1b[32m thisRating ==>", thisRating, "\x1b[0m")
-        if (ratings) {
-          // append to existing ratings
-          fields.ratings = `${ratings}\n${thisRating}`
+        if (activities) {
+          // append to existing activities
+          fields.activities = `${activities}\n${thisRating}`
         } else {
-          fields.ratings = `${thisRating}`
+          fields.activities = `${thisRating}`
         }
         console.log("\x1b[32m fields ==>", fields, "\x1b[0m")
 
