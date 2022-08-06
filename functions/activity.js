@@ -88,20 +88,6 @@ exports.handler = function (context, event, callback) {
     activity = `${myTime}: Completed Phone Call`
     phone = caller
   }
-  // Call voice completed - call sendSurvey() method to trigger Studio flow
-  sendSurvey()
-    .then(function () {
-      console.log("CALLED SEND SURVEY")
-    })
-    .catch(function (err) {
-      console.log(err)
-    })
-  console.log("\x1b[32m phone ==>", phone, "\x1b[0m")
-  console.log(
-    "\x1b[32m encodeURIComponent(phone) ==>",
-    encodeURIComponent(phone),
-    "\x1b[0m"
-  )
 
   // SEND SURVEY FUNCTION
   const sendSurvey = async () => {
@@ -112,7 +98,7 @@ exports.handler = function (context, event, callback) {
     params.append("To", phone)
     params.append(
       "Parameters",
-      '{"body":"Thank you for contacting Rocky Mountain Crisis Partners. Your feedback is important to us. Please rate your last conversation on a scale from 1-5.\n\n5 = Fantastic\n4 = Exceeded expectations\n3 = Met expectations\n2 = Needs improvement\n1 = Poor\n\nYou may reply with a rating of 1-5.\"}'
+      '{"body":"Thank you for contacting Rocky Mountain Crisis Partners. Your feedback is important to us. Please rate your last conversation on a scale from 1-5.\n\n5 = Fantastic\n4 = Exceeded expectations\n3 = Met expectations\n2 = Needs improvement\n1 = Poor\n\nYou may reply with a rating of 1-5."}'
     )
     const config = {
       headers: {
@@ -129,6 +115,21 @@ exports.handler = function (context, event, callback) {
       console.log("ERROR GETTING STUDIO FLOW\n" + err)
     }
   }
+
+  // Call voice completed - call sendSurvey() method to trigger Studio flow
+  sendSurvey()
+    .then(function () {
+      console.log("CALLED SEND SURVEY")
+    })
+    .catch(function (err) {
+      console.log(err)
+    })
+  console.log("\x1b[32m phone ==>", phone, "\x1b[0m")
+  console.log(
+    "\x1b[32m encodeURIComponent(phone) ==>",
+    encodeURIComponent(phone),
+    "\x1b[0m"
+  )
 
   base("contacts")
     .select({
