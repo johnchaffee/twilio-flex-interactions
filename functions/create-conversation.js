@@ -40,7 +40,7 @@ exports.handler = function (context, event, callback) {
       .catch((error) => console.log(error))
   }
 
-  async function createConvversation() {
+  async function createConversation() {
     await client.conversations.v1.conversations
       .create({ friendlyName: "Follow up conversation" })
       .then((conversation) => {
@@ -94,7 +94,7 @@ exports.handler = function (context, event, callback) {
   // Run all the functions
   getActiveConversations().then(() => {
     if (activeConversation === false) {
-      createConvversation().then(() => {
+      createConversation().then(() => {
         createParticipant().then(() => {
           createMessage().then(() => {
             createWebhook().then(() => {
