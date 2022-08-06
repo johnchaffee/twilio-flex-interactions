@@ -371,12 +371,6 @@
         let day = rightNow.getDate()
         let hour = rightNow.getHours()
         let minute = rightNow.getMinutes()
-        // Convert UTC Time to Pacific Time
-        hour = hour - 7
-        if (hour > 16) {
-          day = rightNow.getDate() - 1
-        }
-        // Format month, day, hour, minute as 2-digits
         month = ("0" + month).slice(-2)
         day = ("0" + day).slice(-2)
         hour = ("0" + hour).slice(-2)
