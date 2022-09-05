@@ -1,6 +1,10 @@
 {
 	"ACdb6fe73a118680e3b12050d779266cca": {
 		"serviceSid": "ZSe5da14a3deb95a7554bafa6bf93f5f63",
-		"latestBuild": "ZB20d5d58f49b665f780963f81b95a0456"
+		"latestBuild": "ZB53670606410da86867de20b8c65af80f"
+	},
+	"AC509f44b9f1d4c581e9bd91745aadc624": {
+		"serviceSid": "ZSe8722ac486408a7e1fc7c9ecb5c4f9c4",
+		"latestBuild": "ZB2c36980e04eb7fb5328c970ef8e0ca83"
 	}
 }
