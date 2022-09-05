@@ -5,7 +5,7 @@ const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
 const author = process.env.AUTHOR
 const webhookUrl = process.env.WEBHOOK_URL
 const client = require("twilio")(accountSid, authToken)
-let conversationSid
+let conversationSid = ""
 let activeConversation = false
 
 exports.handler = function (context, event, callback) {
