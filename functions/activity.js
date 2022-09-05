@@ -16,13 +16,14 @@ require("dotenv").config()
 const accountSid = process.env.ACCOUNT_SID
 const authToken = process.env.AUTH_TOKEN
 const surveyPhoneNumber = process.env.SURVEY_PHONE_NUMBER
+const surveyFlowSid = process.env.SURVEY_FLOW_SID
 const airtable = require("airtable")
 const axios = require("axios").default
 
 // SEND SURVEY FUNCTION
 const sendSurvey = async (from, to) => {
   console.log("\x1b[32m SEND SURVEY \x1b[0m")
-  const url = `https://studio.twilio.com/v1/Flows/FW8f72096c5951a0af354b373b8bc106cd/Executions`
+  const url = `https://studio.twilio.com/v1/Flows/${surveyFlowSid}/Executions`
   const params = new URLSearchParams()
   params.append("From", from)
   params.append("To", to)
